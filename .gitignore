@@ -349,8 +349,6 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
-#Manual
-
-libs/*/*.dll
-libs/*/*.xml
-libs/*.dll
+LastEpochMod/libs/*/*.dll
+LastEpochMod/libs/*/*.xml
+LastEpochMod/libs/*.dll
