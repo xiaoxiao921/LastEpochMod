@@ -2,6 +2,7 @@
 using MelonLoader;
 using System;
 using System.Collections;
+using System.Drawing.Imaging;
 using System.IO;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -22,13 +23,11 @@ namespace LastEpochMod.Items
             {
                 if (!_texture)
                 {
-                    var modDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Mods", nameof(LastEpochMod));
-                    Directory.CreateDirectory(modDirectoryPath);
-                    var pngPath = Path.Combine(modDirectoryPath, Name + ".png");
-                    var png = File.ReadAllBytes(pngPath);
+                    using var stream = new MemoryStream();
+                    Properties.Resources.Headhunter.Save(stream, ImageFormat.Png);
 
                     _texture = new Texture2D(1, 1);
-                    ImageConversion.LoadImage(_texture, png, true);
+                    ImageConversion.LoadImage(_texture, stream.ToArray(), true);
                 }
 
                 return _texture;
@@ -48,6 +47,8 @@ namespace LastEpochMod.Items
                 return _sprite;
             }
         }
+
+        public static UniqueList.Entry UniqueEntry { get; private set; }
 
         public const string LoreText =
             "A man's soul rules from a cavern of bone, " +
@@ -69,102 +70,66 @@ namespace LastEpochMod.Items
         {
             //The Scavenger is an unique leather belt
             var theScavenger = Finder.GetUniqueItem("The Scavenger");
-            var uleros = Finder.GetUniqueItem("Chains of Uleros");
 
-            var headhunterEntry = new UniqueList.Entry();
+            // Just to get the same rollChance as Orians Eye
+            var oriansEye = Finder.GetUniqueItem("Orians Eye");
 
-            headhunterEntry.name = Name;
-            headhunterEntry.displayName = Name;
-            headhunterEntry.loreText = LoreText;
+            UniqueEntry = new UniqueList.Entry();
 
-            headhunterEntry.baseType = theScavenger.baseType;
-            headhunterEntry.subTypes = theScavenger.subTypes;
+            UniqueEntry.name = Name;
+            UniqueEntry.displayName = Name;
+            UniqueEntry.loreText = LoreText;
 
-            headhunterEntry.canDropRandomly = true;
+            UniqueEntry.baseType = theScavenger.baseType;
+            UniqueEntry.subTypes = theScavenger.subTypes;
 
-            headhunterEntry.isSetItem = false;
-            headhunterEntry.setID = 0;
+            UniqueEntry.canDropRandomly = true;
 
-            headhunterEntry.levelRequirement = 1;
-            headhunterEntry.overrideLevelRequirement = true;
+            UniqueEntry.isSetItem = false;
+            UniqueEntry.setID = 0;
 
-            headhunterEntry.rerollChance = theScavenger.rerollChance;
+            UniqueEntry.levelRequirement = 40;
+            UniqueEntry.overrideLevelRequirement = true;
 
-            AddHeadhunterMods(headhunterEntry);
+            UniqueEntry.rerollChance = oriansEye.rerollChance;
 
-            foreach (var entry in uleros.tooltipEntries)
-            {
-                MelonLogger.Msg("modDisplay : " + entry.modDisplay);
-            }
-            MelonLogger.Msg("");
-            foreach (var entry in uleros.tooltipDescriptions)
-            {
-                MelonLogger.Msg("altText : " + entry.altText);
-                MelonLogger.Msg("description : " + entry.description);
-                MelonLogger.Msg("setMod: " + entry.setMod);
-                MelonLogger.Msg("setRequirement: " + entry.setRequirement);
-            }
-            MelonLogger.Msg("");
-            foreach (var entry in uleros.mods)
-            {
-                MelonLogger.Msg("canRoll : " + entry.canRoll);
-                MelonLogger.Msg("hideInTooltip : " + entry.hideInTooltip);
-                MelonLogger.Msg("maxValue : " + entry.maxValue);
-                MelonLogger.Msg("property : " + entry.property.ToString());
-                MelonLogger.Msg("rollID : " + entry.rollID);
-                MelonLogger.Msg("specialTag : " + entry.specialTag);
-                MelonLogger.Msg("tags : " + entry.tags);
-                MelonLogger.Msg("type : " + entry.type.ToString());
-                MelonLogger.Msg("value : " + entry.value);
-            }
+            AddHeadhunterMods(UniqueEntry);
 
-
-            headhunterEntry.tooltipEntries = new List<UniqueModDisplayListEntry>();
+            UniqueEntry.tooltipEntries = new List<UniqueModDisplayListEntry>();
             var tooltipEntry0 = new UniqueModDisplayListEntry(0);
-            headhunterEntry.tooltipEntries.Add(tooltipEntry0);
+            UniqueEntry.tooltipEntries.Add(tooltipEntry0);
             var tooltipEntry1 = new UniqueModDisplayListEntry(1);
-            headhunterEntry.tooltipEntries.Add(tooltipEntry1);
-            var tooltipEntry2 = new UniqueModDisplayListEntry(2);
-            headhunterEntry.tooltipEntries.Add(tooltipEntry2);
+            UniqueEntry.tooltipEntries.Add(tooltipEntry1);
 
-            var tooltipEntry3 = new UniqueModDisplayListEntry(128);
-            headhunterEntry.tooltipEntries.Add(tooltipEntry3);
+            var tooltipEntry2 = new UniqueModDisplayListEntry(128);
+            UniqueEntry.tooltipEntries.Add(tooltipEntry2);
 
-            headhunterEntry.tooltipDescriptions = new List<ItemTooltipDescription>();
+            UniqueEntry.tooltipDescriptions = new List<ItemTooltipDescription>();
             var tooltipDescription0 = new ItemTooltipDescription();
             tooltipDescription0.description = "When you Kill a Rare monster, you gain its Modifiers for 20 seconds";
-            headhunterEntry.tooltipDescriptions.Add(tooltipDescription0);
+            UniqueEntry.tooltipDescriptions.Add(tooltipDescription0);
 
-            headhunterEntry.uniqueID = 666;
+            UniqueEntry.uniqueID = 666;
 
             var uniqueList = UniqueList.get();
-            uniqueList.uniques.Add(headhunterEntry);
+            uniqueList.uniques.Add(UniqueEntry);
         }
 
         private static void AddHeadhunterMods(UniqueList.Entry headhunterEntry)
         {
             var headhunterMods = new List<UniqueItemMod>();
 
-            var addedStrength = new UniqueItemMod();
-            addedStrength.canRoll = true;
-            addedStrength.property = SP.Strength;
-            addedStrength.tags = AT.None;
-            addedStrength.type = BaseStats.ModType.ADDED;
-            addedStrength.setMaxValue(55);
-            addedStrength.setValue(40);
-            headhunterMods.Add(addedStrength);
-
-            var addedDexterity = new UniqueItemMod();
-            addedStrength.canRoll = true;
-            addedDexterity.property = SP.Dexterity;
-            addedDexterity.tags = AT.None;
-            addedDexterity.type = BaseStats.ModType.ADDED;
-            addedDexterity.setMaxValue(55);
-            addedDexterity.setValue(40);
-            headhunterMods.Add(addedDexterity);
+            var addedAttributes = new UniqueItemMod();
+            addedAttributes.canRoll = true;
+            addedAttributes.property = SP.AllAttributes;
+            addedAttributes.tags = AT.None;
+            addedAttributes.type = BaseStats.ModType.ADDED;
+            addedAttributes.setMaxValue(10);
+            addedAttributes.setValue(5);
+            headhunterMods.Add(addedAttributes);
 
             var addedLife = new UniqueItemMod();
-            addedStrength.canRoll = true;
+            addedLife.canRoll = true;
             addedLife.property = SP.Health;
             addedLife.tags = AT.None;
             addedLife.type = BaseStats.ModType.ADDED;
@@ -344,6 +309,18 @@ namespace LastEpochMod.Items
             yield return new WaitForSeconds(duration);
 
             UnityEngine.Object.Destroy(component);
+        }
+
+        public static void TestRandomLeatherBeltDrop()
+        {
+            var itemDataUnpacked = new ItemDataUnpacked();
+            PlayerFinder.getPlayerActor().generateItems.RollBaseItem(ref itemDataUnpacked, 50, false, UniqueEntry.baseType, UniqueEntry.subTypes[0], 7, ItemLocationTag.None, -1, -1, true);
+            PlayerFinder.getPlayerActor().generateItems.GenerateAffixes(ref itemDataUnpacked, 50, false, false);
+            if (itemDataUnpacked != null)
+            {
+                itemDataUnpacked.RebuildID();
+                MelonLogger.Msg(itemDataUnpacked.FullName);
+            }
         }
     }
 

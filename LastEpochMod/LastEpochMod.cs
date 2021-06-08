@@ -32,10 +32,10 @@ namespace LastEpochMod
                 Items.Spawner.AddUniqueItemToPlayerInventory(Items.Spawner.ItemName.GetValueAsString());
                 //Items.Finder.PrintAllEquippableSubItems();
 
-                foreach (var item in Player.Cache.GameObject.GetComponents<Component>())
+                /*foreach (var item in Player.Cache.GameObject.GetComponents<Component>())
                 {
                     MelonLogger.Warning(item.ToString());
-                }
+                }*/
             }
         }
     }
