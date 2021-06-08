@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System;
 using UnityEngine;
 
 namespace LastEpochMod
@@ -17,7 +18,11 @@ namespace LastEpochMod
 
             Config.Init();
 
+            Items.Headhunter.Init();
+
             ResourcesListener.Init();
+
+            //Harmony.PatchAll();
         }
 
         public override void OnUpdate()
@@ -25,6 +30,12 @@ namespace LastEpochMod
             if (Input.GetKeyDown(KeyCode.X))
             {
                 Items.Spawner.AddUniqueItemToPlayerInventory(Items.Spawner.ItemName.GetValueAsString());
+                //Items.Finder.PrintAllEquippableSubItems();
+
+                foreach (var item in Player.Cache.GameObject.GetComponents<Component>())
+                {
+                    MelonLogger.Warning(item.ToString());
+                }
             }
         }
     }

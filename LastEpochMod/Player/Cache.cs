@@ -5,7 +5,7 @@ namespace LastEpochMod.Player
     public static class Cache
     {
         private static GameObject _player;
-        internal static GameObject GameObject
+        public static GameObject GameObject
         {
             get
             {
@@ -19,14 +19,31 @@ namespace LastEpochMod.Player
             }
         }
 
+        private static Actor _actor;
+        public static Actor Actor
+        {
+            get
+            {
+                if (!_actor)
+                {
+                    _actor = PlayerFinder.getPlayerActor();
+
+                }
+
+                return _actor;
+            }
+        }
+
+        public static CharacterData CharacterData => PlayerFinder.getPlayerData();
+
         private static GenerateItems _playerGenerateItems;
-        internal static GenerateItems GenerateItems
+        public static GenerateItems GenerateItems
         {
             get
             {
                 if (!_playerGenerateItems)
                 {
-                    _playerGenerateItems = GameObject.GetComponent<GenerateItems>();
+                    _playerGenerateItems = Actor.generateItems;
                 }
 
                 return _playerGenerateItems;
@@ -34,13 +51,13 @@ namespace LastEpochMod.Player
         }
 
         private static ItemContainersManager _itemContainersManager;
-        internal static ItemContainersManager ItemContainersManager
+        public static ItemContainersManager ItemContainersManager
         {
             get
             {
                 if (!_itemContainersManager)
                 {
-                    _itemContainersManager = GameObject.GetComponent<ItemContainersManager>();
+                    _itemContainersManager = Actor.itemContainersManager;
                 }
 
                 return _itemContainersManager;

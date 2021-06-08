@@ -449,6 +449,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Items\Finder.cs" />
+    <Compile Include="Items\Headhunter.cs" />
     <Compile Include="Items\Spawner.cs" />
     <Compile Include="Player\Cache.cs" />
     <Compile Include="ResourcesListener.cs" />

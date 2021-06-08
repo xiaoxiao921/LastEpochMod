@@ -28,5 +28,20 @@ namespace LastEpochMod.Items
                 MelonLogger.Msg(uniqueEntry.name);
             }
         }
+
+        internal static void PrintAllEquippableSubItems()
+        {
+            var itemList = ItemList.get();
+
+            foreach (var item in itemList.EquippableItems)
+            {
+                MelonLogger.Warning(item.BaseTypeName);
+
+                foreach (var subItem in item.subItems)
+                {
+                    MelonLogger.Msg(subItem.name);
+                }
+            }
+        }
     }
 }

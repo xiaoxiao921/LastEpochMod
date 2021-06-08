@@ -14,6 +14,19 @@ namespace LastEpochMod
             MelonLogger.Msg("Resources.Load Path : " + path);
         }
 
+        [HarmonyPrefix]
+        internal static bool Prefix2(ref Object __result, ref string path, ref Il2CppSystem.Type systemTypeInstance)
+        {
+            if (path.Contains("Headhunter"))
+            {
+                __result = Items.Headhunter.Sprite;
+
+                return false;
+            }
+
+            return true;
+        }
+
         [HarmonyPostfix]
         internal static void Postfix2(ref string path, ref Il2CppSystem.Type systemTypeInstance)
         {
@@ -30,9 +43,10 @@ namespace LastEpochMod
             LastEpochMod.Instance.Harmony.Patch(resourcesLoadMethod, null, postfix);
 
             var resourcesLoadMethod2 = typeof(Resources).GetMethods(bf).Where(m => m.Name == nameof(Resources.Load) && m.GetParameters().Length == 2).ToArray()[0];
+            var prefix2 = new HarmonyMethod(typeof(ResourcesListener).GetMethod(nameof(Prefix2), bf));
             var postfix2 = new HarmonyMethod(typeof(ResourcesListener).GetMethod(nameof(Postfix2), bf));
 
-            LastEpochMod.Instance.Harmony.Patch(resourcesLoadMethod2, null, postfix2);
+            LastEpochMod.Instance.Harmony.Patch(resourcesLoadMethod2, prefix2, postfix2);
         }
     }
 }
